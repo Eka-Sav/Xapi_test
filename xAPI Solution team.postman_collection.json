@@ -1,0 +1,1753 @@
+{
+	"info": {
+		"_postman_id": "ca1c6400-d257-4f60-8a71-6d63aab4f3cb",
+		"name": "xAPI Solution team",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "New Folder",
+			"item": [
+				{
+					"name": "createOrganization",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Create_organization\", () => {\r",
+									"pm.expect(pm.response.code).to.eql(200);\r",
+									"const responseJson = pm.response.json();\r",
+									"pm.collectionVariables.set(\"organization_id\", responseJson.data.createOrganization.id);\r",
+									"const globalOrganizationId = postman.getGlobalVariable(\"organization_id\")\r",
+									"console.log(globalOrganizationId)});\r",
+									"console.log(pm.response);\r",
+									"console.log(pm.response.json());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "api_key",
+								"value": "ce3d045144724f2b9ad070180f3c7b82",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation createOrganization ($command: InputCreateOrganizationType!) {\ncreateOrganization (command: $command) {\nid\nname\naddresses {\nitems {\ncity\ncountryCode\ncountryName\nregionId\nregionName\npostalCode\nline1\nzip\n}\n}   \n}\n} ",
+								"variables": "{\n\"command\": {\n\"name\":\"{{organization_name}}\",   \n\"addresses\": [{\n\"addressType\": 1,\n\"city\": \"111\",\n\"countryCode\": \"USA\",\n\"countryName\": \"United States of America\",\n\"regionId\": \"AL\",\n\"regionName\": \"Alabama\",\n\"postalCode\": \"111111\",\n\"line1\": \"Adress line 1\",\n\"zip\": \"222222\"\n}]     \n}\n}"
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createContact",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Create_contact\", () => {\r",
+									"pm.expect(pm.response.code).to.eql(200);\r",
+									"const responseJson = pm.response.json();\r",
+									"pm.collectionVariables.set(\"contact_id\", responseJson.data.createContact.id);\r",
+									"const globalContactId = postman.getGlobalVariable(\"contact_id\")\r",
+									"console.log(globalContactId)});\r",
+									"console.log (pm.response)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation createContact ($command: InputCreateContactType!) {\n    createContact (command: $command) {\n        fullName\n        id\n        lastName\n        name\n            organizations {\n            items {\n                id \n                name\n            }\n        }\n    }\n}",
+								"variables": "{\n\"command\": {\n\"name\": \"Contact_xapi_test\",\n\"memberType\": \"Contact\",\n\"addresses\": [],\n\"fullName\": \"Contact_xapi_test\",\n\"firstName\": \"Contact_xapi_test\",\n\"lastName\": \"Contact_xapi_test\",\n\"organizations\": \"{{organization_id}}\"\n}\n}"
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createUser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"createUser\", () => {\r",
+									"pm.expect(pm.response.code).to.eql(200)}); \r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": [
+								{
+									"key": "tokenName",
+									"value": "TokenAdmin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "store",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "accessTokenUrl",
+									"value": "https://webstore-platform.qa.govirto.com/connect/token",
+									"type": "string"
+								},
+								{
+									"key": "grant_type",
+									"value": "password_credentials",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation createUser ($command: InputCreateUserType!) {\n    createUser (command: $command) {\n        errors {\n            code\n            description\n        }\n        succeeded\n      \n    }\n}",
+								"variables": "{\n\"command\": {\n\"createdBy\": \"User_xapi_test\",\n\"email\": \"userxapitest@mail.com\",\n\"password\":\"{{password}}\",\n\"userName\": \"{{user}}\",\n\"userType\": \"Customer\",\n\"memberId\": \"{{contact_id}}\"\n}\n}"
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"User\", () => {\r",
+									"pm.expect(pm.response.code).to.eql(200);\r",
+									"\r",
+									"console.log(pm.response.json());\r",
+									"\r",
+									"const responseJson = pm.response.json();\r",
+									"const onlyToken = responseJson.access_token;\r",
+									"\r",
+									"pm.collectionVariables.set(\"user_token\", onlyToken);\r",
+									"//const globalContactId = postman.getGlobalVariable(\"user_token\")\r",
+									"console.log(pm.collectionVariables.get(\"user_token\"))\r",
+									"console.log(pm.response.json());\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "grant_type=password&username={{user}}&password={{password}}"
+						},
+						"url": {
+							"raw": "https://webstore-platform.qa.govirto.com/connect/token",
+							"protocol": "https",
+							"host": [
+								"webstore-platform",
+								"qa",
+								"govirto",
+								"com"
+							],
+							"path": [
+								"connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login as user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"loginAsUser\", () => {\r",
+									"    console.log(pm.response.json())\r",
+									"pm.expect(pm.response.code).to.eql(200);\r",
+									"const responseJson = pm.response.json();\r",
+									"pm.expect(responseJson.data.me.contact.organizations[0].name).to.not.empty;});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query me  {\n    me {\n        id\n        contact {\n            organizations {\n                name}\n        }\n    }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createAddressIfKeyNotExists",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test (\"addressIfKeyNotExists\", function(){\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation updateMemberAddresses($command: InputUpdateMemberAddressType!) {\r\nupdateMemberAddresses(command: $command) {\r\nmemberType\r\naddresses {\r\nkey\r\nfirstName\r\nlastName\r\nline1\r\nphone\r\nemail\r\ncountryCode\r\npostalCode\r\nregionName\r\ncity\r\n}\r\n}\r\n}",
+								"variables": "{\r\n\"command\": {\r\n\"memberId\": \"{{organization_id}}\",\r\n\"addresses\": [{\r\n\"key\": \"Id of the Address_2\",\r\n\"firstName\":\"new name\",\r\n\"lastName\": \"new name\",\r\n\"line1\": \"new address\",\r\n\"phone\": \"new phone\",\r\n\"email\": \"new email\",\r\n\"countryCode\": \"new country code\",\r\n\"countryName\": \"new country\",\r\n\"postalCode\": \"new postal code\",\r\n\"regionName\": \"new region\",\r\n\"city\": \"new city\"\r\n}]\r\n}\r\n}"
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getOrganizationAddressesPagination",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query getOrganizationAddresses($id: String!, $count: Int, $cursor: String, $sort: String) {\r\norganization(id: $id) {\r\naddresses(first: $count, after: $cursor, sort: $sort) {\r\ntotalCount\r\npageInfo {\r\nendCursor\r\nhasNextPage\r\nhasPreviousPage\r\nstartCursor\r\n}\r\nitems {\r\nfirstName\r\nlastName\r\nline1\r\nphone\r\nemail\r\ncountryCode\r\npostalCode\r\nregionName\r\ncity\r\n}\r\n}\r\n}\r\n}",
+								"variables": "{\r\n\"id\": \"{{organization_id}}\"\r\n}"
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "createOrganization",
+			"item": [
+				{
+					"name": "getCountries",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"getCountries\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query{\r\n    countries{\r\n        id,\r\n        name,\r\n        regions{\r\n            id,\r\n            name\r\n        }\r\n    }\r\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getRegions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"/*pm.test(\"getRegions\", () => {\r",
+									"pm.expect(pm.response.code).to.eql(200)});*/\r",
+									"\r",
+									"pm.test(\"getRegions\", function (){\r",
+									"pm.expect(pm.response.code).to.eql(200)});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query {\r\n  regions (countryId: \"USA\") {\r\n\t\tid,\r\n    name,\t\t \r\n\t}\r\n} \r\n",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createOrganization Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Organization created\", () => {\r",
+									"pm.expect(pm.response.code).to.eql(200);\r",
+									"\r",
+									"const responseJson = pm.response.json();\r",
+									"\r",
+									"pm.collectionVariables.set(\"organization_id\", responseJson.data.createOrganization.id);\r",
+									"});\r",
+									"\r",
+									"/*const globalOrganizationId = postman.getGlobalVariable(\"organization_id\")\r",
+									"\r",
+									"console.log(globalOrganizationId)});\r",
+									"\r",
+									"console.log(pm.collectionVariables.get(\"organization_id\"));\r",
+									"console.log(pm.variables.get(\"organization_id\"));*/\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"organization_name\", pm.variables.replaceIn('Organization_QA_{{$randomInt}}'));\r",
+									"pm.variables.set(\"line1\", pm.variables.replaceIn('street {{$randomStreetName}}'));\r",
+									"pm.variables.set(\"city\", pm.variables.replaceIn('{{$randomCity}}'));\r",
+									"pm.variables.set(\"countryCode\", pm.variables.replaceIn('{{$randomCountryCode}}'));\r",
+									"pm.variables.set(\"firstName\", pm.variables.replaceIn('{{$randomFirstName}}'));\r",
+									"pm.variables.set(\"lastName\", pm.variables.replaceIn('{{$randomLastName}}'));\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "api_key",
+								"value": "ce3d045144724f2b9ad070180f3c7b82",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation createOrganization ($command: InputCreateOrganizationType!) {\ncreateOrganization (command: $command) {\nid\nname\naddresses {\nitems {\nfirstName\nlastName\ncity\ncountryCode\ncountryName\npostalCode\nline1\nzip\n}\n}   \n}\n} ",
+								"variables": "{\n\"command\": {\n\"name\":\"{{organization_name}}\",   \n\"addresses\": [{\n\"addressType\": 1,\n\"firstName\": \"{{firstName}}\",\n\"lastName\": \"{{lastName}}\",\n\"city\": \"{{city}}\",\n\"countryCode\": \"{{countryCode}}\",\n\"countryName\": \"{{countryCode}}\",\n\"postalCode\": \"830000\",\n\"line1\": \"{{line1}}\",\n\"zip\": \"830001\"\n}]     \n}\n}"
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAddressKeyId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"    \r",
+									"pm.test(\"get_address_key\", () => {\r",
+									"pm.expect(pm.response.code).to.eql(200);\r",
+									"const responseJson = pm.response.json();\r",
+									"//pm.collectionVariables.set(\"address_key_id\", responseJson.data.getAddressKeyId.id);\r",
+									"pm.collectionVariables.set(\"address_key_id\", responseJson.data.organization.addresses.items[0].key);\r",
+									"//const globalOrganizationId = postman.getGlobalVariable(\"address_key_id\")\r",
+									"\r",
+									"});\r",
+									"console.log(jsonData.data.organization.addresses.items[0].key);\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query getAddressKeyId ($id: String!, $count: Int, $cursor: String, $sort: String) {\r\norganization(id: $id) {\r\naddresses(first: $count, after: $cursor, sort: $sort) {\r\ntotalCount\r\nitems {\r\nkey\r\nfirstName\r\nlastName\r\nline1\r\nphone\r\nemail\r\ncountryCode\r\npostalCode\r\nregionName\r\ncity\r\n}\r\n}\r\n}\r\n}",
+								"variables": "{\r\n\"id\": \"{{organization_id}}\"\r\n}"
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "createAdresses",
+			"item": [
+				{
+					"name": "updateAddress",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test (\"addressIfKeyNotExists\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"for (var i = 0; i < jsonData.data.updateMemberAddresses.addresses.length; i ++) {\r",
+									"pm.test(\"for: first name:\" +\" new name \" + i, function () {\r",
+									"    console.log(jsonData.data.updateMemberAddresses.addresses[i])\r",
+									"})};\r",
+									"\r",
+									"console.log(jsonData.data.updateMemberAddresses)\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"firstName\", pm.variables.replaceIn('{{$randomFirstName}}'));\r",
+									"pm.variables.set(\"lastName\", pm.variables.replaceIn('{{$randomLastName}}'));\r",
+									"pm.variables.set(\"line1\", pm.variables.replaceIn('street {{$randomStreetName}}'));\r",
+									"pm.variables.set(\"phone\", pm.variables.replaceIn('{{$randomPhoneNumber}}'));\r",
+									"pm.variables.set(\"email\", pm.variables.replaceIn('Useremail{{$randomInt}}@usermail.com'));\r",
+									"pm.variables.set(\"countryCode\", pm.variables.replaceIn('{{$randomCountryCode}}'));\r",
+									"pm.variables.set(\"countryCode\", pm.variables.replaceIn('{{$randomCountryCode}}'));\r",
+									"pm.variables.set(\"city\", pm.variables.replaceIn('{{$randomCity}}'));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation updateMemberAddresses($command: InputUpdateMemberAddressType!) {\r\nupdateMemberAddresses(command: $command) {\r\nmemberType\r\nname\r\naddresses {\r\nkey\r\nfirstName\r\nlastName\r\nline1\r\nphone\r\nemail\r\ncountryCode\r\ncountryName\r\npostalCode\r\ncity\r\n}\r\n}\r\n}",
+								"variables": "{\r\n\"command\": {\r\n\"memberId\": \"{{organization_id}}\",\r\n\"addresses\": [{\r\n\"key\": \"{{address_key_id}}\",\r\n\"firstName\":\"{{firstName}}\",\r\n\"lastName\": \"{{lastName}}\",\r\n\"line1\": \"{{line1}}\",\r\n\"phone\": \"{{phone}}\",\r\n\"email\": \"{{email}}\",\r\n\"countryCode\": \"{{countryCode}}\",\r\n\"countryName\": \"{{countryCode}}\",\r\n\"postalCode\": \"123456\",\r\n\"city\": \"{{city}}\"\r\n}]\r\n}\r\n}"
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createAddressKeyNotExists",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test (\"addressIfKeyNotExists\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"for (var i = 0; i < jsonData.data.updateMemberAddresses.addresses.length; i ++) {\r",
+									"pm.test(\"for: first name:\" +\" new name \" + i, function () {\r",
+									"    console.log(jsonData.data.updateMemberAddresses.addresses[i])\r",
+									"})};\r",
+									"\r",
+									"console.log(jsonData.data.updateMemberAddresses)\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"firstName\", pm.variables.replaceIn('{{$randomFirstName}}'));\r",
+									"pm.variables.set(\"lastName\", pm.variables.replaceIn('{{$randomLastName}}'));\r",
+									"pm.variables.set(\"line1\", pm.variables.replaceIn('street {{$randomStreetName}}'));\r",
+									"pm.variables.set(\"phone\", pm.variables.replaceIn('{{$randomPhoneNumber}}'));\r",
+									"pm.variables.set(\"email\", pm.variables.replaceIn('Useremail{{$randomInt}}@usermail.com'));\r",
+									"pm.variables.set(\"countryCode\", pm.variables.replaceIn('{{$randomCountryCode}}'));\r",
+									"pm.variables.set(\"countryCode\", pm.variables.replaceIn('{{$randomCountryCode}}'));\r",
+									"pm.variables.set(\"city\", pm.variables.replaceIn('{{$randomCity}}'));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation updateMemberAddresses($command: InputUpdateMemberAddressType!) {\r\nupdateMemberAddresses(command: $command) {\r\nmemberType\r\nname\r\naddresses {\r\nkey\r\nfirstName\r\nlastName\r\nline1\r\nphone\r\nemail\r\ncountryCode\r\ncountryName\r\npostalCode\r\ncity\r\n}\r\n}\r\n}",
+								"variables": "{\r\n\"command\": {\r\n\"memberId\": \"{{organization_id}}\",\r\n\"addresses\": [{\r\n\"key\": \"Id of the Address_2\",\r\n\"firstName\":\"{{firstName}}\",\r\n\"lastName\": \"{{lastName}}\",\r\n\"line1\": \"{{line1}}\",\r\n\"phone\": \"{{phone}}\",\r\n\"email\": \"{{email}}\",\r\n\"countryCode\": \"{{countryCode}}\",\r\n\"countryName\": \"{{countryCode}}\",\r\n\"postalCode\": \"123456\",\r\n\"city\": \"{{city}}\"\r\n}]\r\n}\r\n}"
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createAddressIfKeyEmpty",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test (\"addressIfKeyEmpty\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation updateMemberAddresses($command: InputUpdateMemberAddressType!) {\r\nupdateMemberAddresses(command: $command) {\r\nmemberType\r\nname\r\naddresses {\r\nkey\r\nfirstName\r\nlastName\r\nline1\r\nphone\r\nemail\r\ncountryCode\r\npostalCode\r\nregionName\r\ncity\r\n}\r\n}\r\n}",
+								"variables": "{\r\n\"command\": {\r\n\"memberId\": \"{{organization_id}}\",\r\n\"addresses\": [{\r\n\"key\": \"\",\r\n\"firstName\":\"new name\",\r\n\"lastName\": \"new name\",\r\n\"line1\": \"new address\",\r\n\"phone\": \"new phone\",\r\n\"email\": \"new email\",\r\n\"countryCode\": \"new country code\",\r\n\"countryName\": \"new country\",\r\n\"postalCode\": \"new postal code\",\r\n\"regionName\": \"new region\",\r\n\"city\": \"new city\"\r\n}]\r\n}\r\n}"
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "listAddresses Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"/*\r",
+									"pm.test (\"addressIfKeyEmpty\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"console.log(\"*****************************************************\")\r",
+									"\r",
+									"// СОЗДАНИЕ ЦИКЛА\r",
+									"pm.test(\"first name\", function () {\r",
+									"    pm.expect(jsonData.data.organization.addresses.items[0].firstName).to.eql(\"new name\");\r",
+									"});\r",
+									"\r",
+									"console.log(\"*****************************************************\")\r",
+									"\r",
+									"// проверка длины массивы\r",
+									"pm.test(\"array length\", function () {\r",
+									"    pm.expect(jsonData.data.organization.addresses.items).to.be.length(9);\r",
+									"});\r",
+									"\r",
+									"console.log(\"*****************************************************\")\r",
+									"\r",
+									"//while\r",
+									"items = 0\r",
+									"while (items < jsonData.data.organization.addresses.items.length){\r",
+									"    pm.test(\"while: first name:\" +\" new name \" + items, function () {\r",
+									"    pm.expect(jsonData.data.organization.addresses.items[items].firstName).to.eql(\"new name\")\r",
+									"    console.log(jsonData.data.organization.addresses.items[items].firstName)\r",
+									"});\r",
+									"    items ++\r",
+									"}\r",
+									"console.log(\"*****************************************************\")\r",
+									"\r",
+									"//for\r",
+									"for (var i = 0; i < jsonData.data.organization.addresses.items.length; i ++) {\r",
+									"pm.test(\"for: first name:\" +\" new name \" + i, function () {\r",
+									"    pm.expect(jsonData.data.organization.addresses.items[i].firstName).to.eql(\"new name\")\r",
+									"    console.log(jsonData.data.organization.addresses.items[i].firstName)\r",
+									"})};\r",
+									"console.log(\"*****************************************************\")\r",
+									"\r",
+									"//все 3 записи ниже выведут одинаковое значение на консоль\r",
+									"// 1\r",
+									"for (var i = 0; i < jsonData.data.organization.addresses.items.length; i ++) {\r",
+									"  console.log(jsonData.data.organization.addresses.items[i])\r",
+									"};\r",
+									"console.log(\"*****************************************************\")\r",
+									"\r",
+									"//forEach \r",
+									"//2 и 3\r",
+									"jsonData.data.organization.addresses.items.forEach (element => console.log (element));\r",
+									"jsonData.data.organization.addresses.items.forEach (function (element) {console.log (element)});\r",
+									"console.log(\"*****************************************************\")\r",
+									"\r",
+									"// если необходимо провести действие с каждым элементом  массива\r",
+									"jsonData.data.organization.addresses.items.forEach (element => {\r",
+									"    console.log (element);\r",
+									"    console.log (\"break\");\r",
+									"    }\r",
+									"    );\r",
+									"console.log(\"*****************************************************\")\r",
+									"\r",
+									"// ДОБАВЛЕНИЕ ФУНКЦИИ\r",
+									"// вывод элементов с номерами\r",
+									"function myFunction (item, index){\r",
+									"    console.log (item);\r",
+									"    console.log (index);\r",
+									"}\r",
+									"jsonData.data.organization.addresses.items.forEach (myFunction);\r",
+									"console.log(\"*****************************************************\")\r",
+									"\r",
+									"// вывод элементов с номерами в одну строку\r",
+									"function myFunction2 (item, index){\r",
+									"    console.log (index + \" элемент: \" + item);\r",
+									"}\r",
+									"jsonData.data.organization.addresses.items.forEach (myFunction2);\r",
+									"console.log(\"*****************************************************\")\r",
+									"\r",
+									"\r",
+									"// использование 3х параметров:item - указание контректного элементав массиве, index - вывод порядок элемента, arr - если необходимо как-то видоизменять массив\r",
+									"function myFunction3 (item, index, arr){\r",
+									"    arr [index] = item +\" текст\"\r",
+									"    console.log (index + \" элемент: \" + arr [index]);\r",
+									"}\r",
+									"jsonData.data.organization.addresses.items.forEach (myFunction3);\r",
+									"console.log(\"*****************************************************\")\r",
+									"*/\r",
+									"\r",
+									"// запись выше и ниже  - одинаковые\r",
+									"items = jsonData.data.organization.addresses.items\r",
+									"function myFunction4 (item, index, arr){\r",
+									"    arr [index] = item +\" текст1\"\r",
+									"    console.log (index + \" элемент: \" + arr [index]);\r",
+									"}\r",
+									"items.forEach (myFunction4);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"/*pm.variables.set(\"key\", \"value\");\r",
+									"// обращение к переменной: pm.variables.get(\"key\");\r",
+									"pm.variables.get(\"key\");\r",
+									"console.log(pm.variables.get(\"key\"));*/"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query getOrganizationAddresses($id: String!, $count: Int, $cursor: String, $sort: String) {\r\norganization(id: $id) {\r\nname \r\naddresses(first: $count, after: $cursor, sort: $sort) {\r\ntotalCount\r\npageInfo {\r\nendCursor\r\nhasNextPage\r\nhasPreviousPage\r\nstartCursor\r\n}\r\nitems {\r\nfirstName\r\nlastName\r\nline1\r\nphone\r\nemail\r\ncountryCode\r\npostalCode\r\ncity\r\n}\r\n}\r\n}\r\n}",
+								"variables": "{\r\n\"id\": \"{{organization_id}}\"\r\n}"
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "updateDynamicProperties",
+			"item": [
+				{
+					"name": "getDynamicPropertySector",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"getDynamicPropertySector\", () => {\r",
+									"pm.expect(pm.response.code).to.eql(200)});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": " query getDictionaryDynamicPropery($idOrName: String!) \r\n{ dynamicProperty(idOrName: $idOrName) \r\n    { dictionaryItems \r\n        {   items \r\n            {     \r\n                name     \r\n                id     \r\n                __typename   \r\n            }   \r\n        __typename \r\n        } \r\n        __typename \r\n    } \r\n}",
+								"variables": "{\r\n\"idOrName\": \"Sector\"\r\n}"
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateDynamicPropertiesOrg",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"UpdateDynamicPropertiesOrg\", () => {\r",
+									"pm.expect(pm.response.code).to.eql(200)});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": [
+								{
+									"key": "tokenName",
+									"value": "TokenAdmin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "store",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "accessTokenUrl",
+									"value": "https://webstore-platform.qa.govirto.com/connect/token",
+									"type": "string"
+								},
+								{
+									"key": "grant_type",
+									"value": "password_credentials",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation updateMemberDynamicProperties ($command: InputUpdateMemberDynamicPropertiesType!) { updateMemberDynamicProperties (command: $command) { name } }",
+								"variables": "{\r\n\"command\": {\r\n\"memberId\": \"Enter Organization_1 id here\",\r\n\"dynamicProperties\": [{\r\n\"name\": \"Tax number\",\r\n\"value\": \"123455\"\r\n},\r\n{\r\n\"name\": \"Sector\",\r\n\"value\": \"Sector 1\"\r\n}]\r\n}\r\n}"
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "createContact",
+			"item": [
+				{
+					"name": "createContact Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Contact created\", () => {\r",
+									"pm.expect(pm.response.code).to.eql(200);\r",
+									"\r",
+									"const responseJson = pm.response.json();\r",
+									"pm.collectionVariables.set(\"contact_id\", responseJson.data.createContact.id);\r",
+									"});\r",
+									"\r",
+									"/*console.log(responseJson.createContact)\r",
+									"\r",
+									"const globalContactId = postman.getGlobalVariable(\"contact_id\")});\r",
+									"\r",
+									"console.log(globalContactId);\r",
+									"console.log (pm.response)};*/"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"contact_full_name\", pm.variables.replaceIn('contact_QA_{{$randomInt}}'));\r",
+									"pm.variables.set(\"contact_first_name\", pm.variables.replaceIn('{{$randomFirstName}}'));\r",
+									"pm.variables.set(\"contact_last_name\", pm.variables.replaceIn('{{$randomLastName}}'));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation createContact ($command: InputCreateContactType!) {\n    createContact (command: $command) {\n        fullName\n        id\n        firstName\n        lastName\n        firstName\n        name\n            organizations {\n            items {\n                id \n                name\n            }\n        }\n    }\n}",
+								"variables": "{\n\"command\": {\n\"name\": \"Contact_noneed\",\n\"memberType\": \"Contact\",\n\"addresses\": [],\n\"fullName\": \"{{contact_full_name}}\",\n\"firstName\": \"{{contact_first_name}}\",\n\"lastName\": \"{{contact_last_name}}\",\n\"organizations\": \"{{organization_id}}\"\n}\n}"
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "createUser",
+			"item": [
+				{
+					"name": "createUser Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"if (jsonData.data.createUser.succeeded === false) {\r",
+									"    console.log(\"Error message: Duplicate User Name\")  \r",
+									"} else if (jsonData.data.createUser.succeeded === true){\r",
+									"    console.log(\"User created\")\r",
+									"} else {\r",
+									"    console.log(\"Error message: User not created\")\r",
+									"};"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"user_name\", pm.variables.replaceIn('userName_{{$randomInt}}'));\r",
+									"pm.variables.set(\"user_email\", pm.variables.replaceIn('userName_{{$randomInt}}@testxapi.mail'));\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation createUser ($command: InputCreateUserType!) {\n    createUser (command: $command) {\n        errors {\n            code\n            description\n        }\n        succeeded  \n    }\n}",
+								"variables": "{\n\"command\": {\n\"createdBy\": \"Main_User\",\n\"email\": \"{{user_email}}\",\n\"password\": \"{{user_password}}\",\n\"userName\": \"{{user_name}}\",\n\"userType\": \"Customer\",\n\"memberId\": \"{{contact_id}}\"\n}\n}"
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validatePasswordTrue",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"passwordTrue\", () => {\r",
+									"pm.expect(pm.response.code).to.eql(200)});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query{\r\nvalidatePassword(password: \"Qwerty1!\"){\r\nsucceeded,\r\nerrors {\r\ncode}\r\n}\r\n}  ",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validatePasswordFalseLength",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test (\"passwordFalseLength\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query{\r\nvalidatePassword(password: \"Qwert1!\"){\r\nsucceeded,\r\nerrors {\r\ncode}\r\n}\r\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validatePasswordFalseUppercase",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test (\"passwordFalseUppercase\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query{\r\n    validatePassword(password: \"qwerty1!\"){\r\n        succeeded,\r\n        errors{\r\n            code}\r\n    }\r\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validatePasswordFalseLowercase",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test (\"passwordFalseLowercase\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query{\r\nvalidatePassword(password: \"QWERTY1!\"){\r\nsucceeded,\r\nerrors {\r\ncode}\r\n}\r\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validatePasswordFalseDigit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test (\"passwordFalseDigit\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query{\r\nvalidatePassword(password: \"Qwertyu!\"){\r\nsucceeded,\r\nerrors {\r\ncode}\r\n}\r\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validatePasswordFalseNonAlphanumeric",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test (\"passwordFalseNonAlphanumeric\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query{\r\nvalidatePassword(password: \"Qwerty12\"){\r\nsucceeded,\r\nerrors {\r\ncode}\r\n}\r\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validatePasswordFalseUniqueChars",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test (\"passwordFalseUniqueChars\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query{\r\nvalidatePassword(password: \"11111!!!\"){\r\nsucceeded,\r\nerrors {\r\ncode}\r\n}\r\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validatePasswordFalseMix",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test (\"passwordFalseMix\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query{\r\nvalidatePassword(password: \"1\"){\r\nsucceeded,\r\nerrors {\r\ncode}\r\n}\r\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "checkEmailUniquenessTrue",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test (\"MailUniquenessTrue\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query {\r\ncheckEmailUniqueness (email: \"Email_1@mail.com \")\r\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "checkEmailUniquenessFalse",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test (\"MailUniquenessFalse\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query {\r\ncheckEmailUniqueness (email: \"BusinessQA@BusinessQA.ru\")\r\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "checkUsernameUniquenessTrue",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test (\"UsernameUniquenessTrue\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query {\r\n  checkUsernameUniqueness (username: \"User_1\")\r\n}     ",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "checkUsernameUniquenessFalse",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Your test name\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    console.log(pm.response);\r",
+									"    pm.expect(jsonData.value).to.eql(200);\r",
+									"});  \r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query {\r\n  checkUsernameUniqueness (username: \"BusinessQA\")\r\n} ",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getContactFullInfo Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"New_user_name created\", () => {\r",
+									"pm.expect(pm.response.code).to.eql(200);\r",
+									"\r",
+									"const responseJson = pm.response.json();\r",
+									"pm.collectionVariables.set(\"New_user_name\", responseJson.data.contact.securityAccounts[0].userName);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Created user name is eql to variables New_user_name\", () => {\r",
+									"pm.expect(jsonData.data.contact.securityAccounts[0].userName).to.eql(pm.collectionVariables.get(\"New_user_name\"));\r",
+									"\r",
+									"console.log (jsonData.data.contact.securityAccounts[0].userName);\r",
+									"console.log (jsonData.data.contact.securityAccounts[0].email);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query contact ($id: String!){\ncontact (id: $id) {\nid \nfullName\nsecurityAccounts {\n  userName\n  email\n}\n}\n}",
+								"variables": "{\n\"id\": \"{{contact_id}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Token Copy 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"User\", () => {\r",
+									"pm.expect(pm.response.code).to.eql(200);\r",
+									"\r",
+									"const responseJson = pm.response.json();\r",
+									"const onlyToken = responseJson.access_token;\r",
+									"\r",
+									"pm.collectionVariables.set(\"user_token\", onlyToken);\r",
+									"\r",
+									"console.log(pm.collectionVariables.get(\"user_token\"))});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "grant_type=password&username={{New_user_name}}&password={{user_password}}"
+						},
+						"url": {
+							"raw": "https://webstore-platform.qa.govirto.com/connect/token",
+							"protocol": "https",
+							"host": [
+								"webstore-platform",
+								"qa",
+								"govirto",
+								"com"
+							],
+							"path": [
+								"connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login as user Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"loginAsUser\", () => {\r",
+									"pm.expect(pm.response.code).to.eql(200);\r",
+									"console.log(pm.response.json())\r",
+									"\r",
+									"const responseJson = pm.response.json();\r",
+									"pm.expect(responseJson.data.me.contact.organizations.items[0].name).to.not.empty;\r",
+									"\r",
+									"console.log(responseJson.data.me.contact)\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query me  {\n    me {\n        id\n        userName\n        email\n        contact {\n            name\n            organizations {\n                items {\n                    name\n                }\n\t\t\t}\n        }\n    }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "password",
+				"value": "store",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "admin",
+				"type": "string"
+			},
+			{
+				"key": "tokenType",
+				"value": "Bearer",
+				"type": "string"
+			},
+			{
+				"key": "accessToken",
+				"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkVFRkFFRTQ2NUE5OUZDQjdGOTIyREY4M0FDQjY5RjhDN0IzMkZBQjAiLCJ4NXQiOiI3dnJ1UmxxWl9MZjVJdC1EckxhZmpIc3ktckEiLCJ0eXAiOiJhdCtqd3QifQ.eyJuYW1lIjoiMWViMmZhOGFjNjU3NDU0MWFmZGI1MjU4MzNkYWRiNDYiLCJzdWIiOiJhZG1pbiIsInJvbGUiOiJfX2FkbWluaXN0cmF0b3IiLCJtZW1iZXJJZCI6IiIsIm9pX3Rrbl9pZCI6IjEzNmIxM2RkLWFmNTYtNGI0OS1iZDE0LTYzMGQwMzAyNjBmYyIsImF1ZCI6InJlc291cmNlX3NlcnZlciIsImV4cCI6MTYzMTI1MTIxNywiaXNzIjoiaHR0cDovL3dlYnN0b3JlLXBsYXRmb3JtLnFhLmdvdmlydG8uY29tLyIsImlhdCI6MTYzMTI0OTQxN30.kReWY0necBTB0XQOErY9BStTonri1NsGp6_iPOhzrW2tRnNKSFK6ul738eWlPwPS1hC3jwcSvu4qPbzeICaZoeS9zwSSjzDdZQb4xMnWtbs30SxDn9cgPPORKlL-TXs-_K1km7Bk9tG7II1_wkkX5cuZAM8b6G66WkuuaT43MjyLuvY2ZuaX8bCziwtAvWyJvTd1HdfOhvylIrwaaj8hiqnEKZapikWgMcVAe8Po42ZgfRr7rum52qv7Q9_yLTI0h_FC1tu8pPDBVjB6VFn3DuBXBJUW-YgvRQ9a9cIciMJnRAAqLNW443oSNBsdlOam-ZEgpbWJJYXMYTr_jBYWjArldo0BqKml7MmFkkT5Kw0KlJN0alrIkN9AlF6BH82Kqhuadt_h5Rea3tBxnGbnkXyWXuNh2-lSwBaSQvZ4ov6yQtBV3HOC986J7Qs-uFekgS9xgEFVovdZAPxjDOsvrhwbj2TNWw2K3rEoAS3gr7v0Ytu76ZpjCNw5FnyDljPKM5grTsRrFa_LeOeG2gI-XoNr1GfcDc-TRgv9HOaCduehVsEKIdWqBCU4O4rZeodUNhvVkfoZRYnFbeumRadH28cENlBc8y_uxzx3PhxSllix1P_Wxgo25FeQTTAoeiZOTJO27CzIBE8jH8Eyk9NMicFsYuCU9VgCHBCxFwVcCC8",
+				"type": "string"
+			},
+			{
+				"key": "accessTokenUrl",
+				"value": "https://webstore-platform.qa.govirto.com/connect/token",
+				"type": "string"
+			},
+			{
+				"key": "tokenName",
+				"value": "TokenST",
+				"type": "string"
+			},
+			{
+				"key": "grant_type",
+				"value": "password_credentials",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.variables.replaceIn('{{$randomFirstName}}')",
+					"pm.variables.replaceIn('{{$randomLastName}}')"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "https://webstore-platform.qa.govirto.com/graphql"
+		},
+		{
+			"key": "url",
+			"value": "https://webstore-platform.demo.govirto.com/graphql"
+		},
+		{
+			"key": "contact_id",
+			"value": ""
+		},
+		{
+			"key": "organization_id",
+			"value": ""
+		},
+		{
+			"key": "user_password",
+			"value": "Password1!"
+		},
+		{
+			"key": "user_token",
+			"value": ""
+		},
+		{
+			"key": "New_user_name",
+			"value": ""
+		},
+		{
+			"key": "address_key_id",
+			"value": ""
+		}
+	]
+}
